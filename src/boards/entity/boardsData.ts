@@ -1,6 +1,6 @@
 import { Board } from './board.entity';
 
-export const BoardData: Board[] = [
+export const BoardsData: Board[] = [
   {
     id: 1,
     type: 'review',
@@ -8,8 +8,8 @@ export const BoardData: Board[] = [
     writerId: 1,
     views: 5,
     likes: 10,
-    createDate: '20231112',
-    modifiedDate: '20231112',
+    createDate: new Date(),
+    modifiedDate: new Date(),
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const BoardData: Board[] = [
     writerId: 1,
     views: 10,
     likes: 30,
-    createDate: '20231114',
-    modifiedDate: '20231114',
+    createDate: new Date(),
+    modifiedDate: new Date(),
   },
 ];

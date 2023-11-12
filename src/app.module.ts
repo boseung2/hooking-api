@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { BoardModule } from './board/board.module';
+import { BoardsModule } from './boards/board.module';
 
 @Module({
   imports: [
@@ -9,7 +9,7 @@ import { BoardModule } from './board/board.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
     }),
-    BoardModule,
+    BoardsModule,
   ],
   controllers: [],
   providers: [],

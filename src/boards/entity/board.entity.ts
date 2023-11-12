@@ -22,8 +22,8 @@ export class Board {
   likes: number;
 
   @Field({ description: '생성일' })
-  createDate: string;
+  createDate: Date;
 
   @Field({ description: '수정일' })
-  modifiedDate: string;
+  modifiedDate: Date;
 }
