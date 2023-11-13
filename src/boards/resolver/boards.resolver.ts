@@ -18,6 +18,6 @@ export class BoardsResolver {
 
   @ResolveField(() => User)
   writer(@Root() parentBoard: Board): User | undefined {
-    return this.usersService.getUser(parentBoard.id);
+    return this.usersService.getUser(parentBoard.writerId);
   }
 }
