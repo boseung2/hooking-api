@@ -100,7 +100,7 @@ export class UsersResolver {
     if (!user) {
       return {
         errors: [
-          { field: 'emailOrUserId', message: '해당하는 유저가 없습니다`' },
+          { field: 'emailOrUserId', message: '해당하는 유저가 없습니다' },
         ],
       };
     }

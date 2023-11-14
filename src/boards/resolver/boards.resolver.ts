@@ -40,7 +40,7 @@ export class BoardsResolver {
   }
 
   @ResolveField(() => User)
-  writer(@Root() parentBoard: Board): User | undefined {
+  writer(@Root() parentBoard: Board): Promise<User> | undefined {
     return this.usersService.getUser(parentBoard.writerId);
   }
 

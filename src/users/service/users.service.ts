@@ -3,8 +3,10 @@ import { User } from '../entity/user.entity';
 
 @Injectable()
 export class UsersService {
-  getUser(id: number) {
-    const user = {};
+  async getUser(id: number) {
+    const user = await User.findOne({
+      where: [{ id }],
+    });
 
     if (!user) {
       return undefined;
