@@ -29,4 +29,8 @@ export class BoardsService {
       boards: result,
     };
   }
+
+  getBoard(boardId: number) {
+    return boardsData.find((board) => board.id === boardId);
+  }
 }

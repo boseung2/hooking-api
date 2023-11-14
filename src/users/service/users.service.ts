@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UsersData } from '../entity/usersData';
+import { User } from '../entity/user.entity';
 
 @Injectable()
 export class UsersService {
   getUser(id: number) {
-    const user = UsersData.find((user) => user.id === id);
+    const user = {};
 
     if (!user) {
       return undefined;
     }
 
-    return user;
+    return user as User;
   }
 
   getUsers() {
-    return UsersData;
+    return [];
   }
 }

@@ -9,7 +9,7 @@ import {
   Args,
 } from '@nestjs/graphql';
 import { Board } from '../entity/board.entity';
-import User from 'src/users/entity/user.entity';
+import { User } from 'src/users/entity/user.entity';
 import { BoardsService } from '../service/boards.service';
 import { UsersService } from '../../users/service/users.service';
 
@@ -42,5 +42,12 @@ export class BoardsResolver {
   @ResolveField(() => User)
   writer(@Root() parentBoard: Board): User | undefined {
     return this.usersService.getUser(parentBoard.writerId);
+  }
+
+  @Query(() => Board, { nullable: true })
+  board(
+    @Args('boardId', { type: () => Int }) boardId: number,
+  ): Board | undefined {
+    return this.boardService.getBoard(boardId);
   }
 }
