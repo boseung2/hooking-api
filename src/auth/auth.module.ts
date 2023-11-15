@@ -8,7 +8,7 @@ const JWT_SECRET_KEY = 'secret-key';
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY || JWT_SECRET_KEY,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '30m' },
     }),
   ],
   providers: [AuthService],

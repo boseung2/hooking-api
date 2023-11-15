@@ -6,6 +6,7 @@ import { LoginInput } from '../input/login.input';
 import { AuthService } from '../../auth/service/auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +46,7 @@ export class UsersService {
     return newUser;
   }
 
-  async login(loginInput: LoginInput) {
+  async login(loginInput: LoginInput, response: Response) {
     const { emailOrUserId, password } = loginInput;
 
     const user = await this.userRepository.findOne({
@@ -69,9 +70,21 @@ export class UsersService {
       };
     }
 
+    // 엑세스 토큰 발급
     const accessToken = this.authService.createAccessToken(user.id);
+    const refreshToken = this.authService.createRefreshToken(user.id);
+
+    this.setRefreshTokenHeader(response, refreshToken);
 
     return { user, accessToken };
+  }
+
+  private setRefreshTokenHeader(response: Response, refreshToken: string) {
+    response.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
   }
 
   getUsers() {

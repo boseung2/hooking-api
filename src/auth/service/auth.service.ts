@@ -24,4 +24,12 @@ export class AuthService {
       throw new AuthenticationError('access token expired');
     }
   }
+
+  createRefreshToken(userId: number) {
+    const userData = { userId };
+
+    return this.jwtService.sign(userData, {
+      expiresIn: '14d',
+    });
+  }
 }
