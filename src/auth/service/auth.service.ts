@@ -1,3 +1,4 @@
+import { AuthenticationError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -10,5 +11,17 @@ export class AuthService {
     const accessToken = this.jwtService.sign(userData);
 
     return accessToken;
+  }
+
+  verifyAccessToken(accessToken?: string) {
+    if (!accessToken) return null;
+
+    try {
+      const verified = this.jwtService.verify(accessToken);
+
+      return verified;
+    } catch (err) {
+      throw new AuthenticationError('access token expired');
+    }
   }
 }
