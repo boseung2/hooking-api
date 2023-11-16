@@ -6,7 +6,7 @@ import { LoginInput } from '../input/login.input';
 import { AuthService } from '../../auth/service/auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { CacheDBService } from 'src/cache/cache.service';
 
 @Injectable()
@@ -91,8 +91,8 @@ export class UsersService {
     });
   }
 
-  async refreshAccessToken(req: Request) {
-    const refreshToken = req.cookies.refreshtoken;
+  async refreshAccessToken(response: Response) {
+    const refreshToken = response.req.cookies.refreshtoken;
     if (!refreshToken) return null;
 
     const { userId } = this.authService.verifyAccessToken(refreshToken);
@@ -110,7 +110,7 @@ export class UsersService {
 
     await this.cacheDBService.set(String(user.id), newRefreshToken);
 
-    this.setRefreshTokenHeader(req.res, newRefreshToken);
+    this.setRefreshTokenHeader(response.req.res, newRefreshToken);
 
     return {
       accessToken: newAccessToken,

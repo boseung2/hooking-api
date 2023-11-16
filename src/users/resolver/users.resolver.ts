@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from '../entity/user.entity';
 import { UsersService } from '../service/users.service';
 import { SignUpInput } from '../input/sign-up.input';
@@ -10,7 +10,7 @@ import {
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { Res, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 
 @Resolver(User)
 export class UsersResolver {
@@ -26,6 +26,7 @@ export class UsersResolver {
     @Args('loginInput') loginInput: LoginInput,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResponse> {
+    console.log('LOGIN!!!');
     return this.usersService.login(loginInput, response.req.res);
   }
 
@@ -36,8 +37,8 @@ export class UsersResolver {
   }
 
   @Mutation(() => RefreshAccessTokenResponse, { nullable: true })
-  async refreshAccessToken(@Context('req') req: Request) {
-    this.usersService.refreshAccessToken(req);
+  async refreshAccessToken(@Res({ passthrough: true }) response: Response) {
+    return this.usersService.refreshAccessToken(response);
   }
 
   @Query(() => [User])
