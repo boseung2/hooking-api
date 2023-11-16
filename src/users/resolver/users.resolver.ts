@@ -41,6 +41,15 @@ export class UsersResolver {
     return this.usersService.refreshAccessToken(response);
   }
 
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async logout(
+    @CurrentUser() userId: number,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.usersService.logout(userId, response.req.res);
+  }
+
   @Query(() => [User])
   Users(): User[] {
     return this.usersService.getUsers();

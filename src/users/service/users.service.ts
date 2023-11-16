@@ -117,6 +117,15 @@ export class UsersService {
     };
   }
 
+  async logout(userId: number, response: Response) {
+    if (userId) {
+      this.setRefreshTokenHeader(response, '');
+      await this.cacheDBService.del(String(userId));
+    }
+
+    return true;
+  }
+
   getUsers() {
     return [];
   }

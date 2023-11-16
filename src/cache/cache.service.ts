@@ -13,4 +13,8 @@ export class CacheDBService {
   async get(key: string): Promise<string> {
     return await this.cacheManager.get(key);
   }
+
+  async del(key: string): Promise<void> {
+    await this.cacheManager.del(key);
+  }
 }
