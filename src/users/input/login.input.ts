@@ -33,3 +33,8 @@ export class LoginResponse {
   @Field({ nullable: true })
   accessToken?: string;
 }
+
+@ObjectType({ description: '엑세스 토큰 새로고침 반환 데이터' })
+export class RefreshAccessTokenResponse {
+  @Field() accessToken: string;
+}

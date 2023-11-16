@@ -1,12 +1,16 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from '../entity/user.entity';
 import { UsersService } from '../service/users.service';
 import { SignUpInput } from '../input/sign-up.input';
-import { LoginInput, LoginResponse } from '../input/login.input';
+import {
+  LoginInput,
+  LoginResponse,
+  RefreshAccessTokenResponse,
+} from '../input/login.input';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { Res, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Resolver(User)
 export class UsersResolver {
@@ -29,6 +33,11 @@ export class UsersResolver {
   @Query(() => User, { nullable: true })
   async me(@CurrentUser() userId: number): Promise<User> {
     return this.usersService.getUser(userId);
+  }
+
+  @Mutation(() => RefreshAccessTokenResponse, { nullable: true })
+  async refreshAccessToken(@Context('req') req: Request) {
+    this.usersService.refreshAccessToken(req);
   }
 
   @Query(() => [User])

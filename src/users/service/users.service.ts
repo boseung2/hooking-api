@@ -6,7 +6,8 @@ import { LoginInput } from '../input/login.input';
 import { AuthService } from '../../auth/service/auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+import { CacheDBService } from 'src/cache/cache.service';
 
 @Injectable()
 export class UsersService {
@@ -14,14 +15,13 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private authService: AuthService,
+    private cacheDBService: CacheDBService,
   ) {}
 
   async getUser(id: number) {
     const user = await this.userRepository.findOne({
       where: { id: Equal(id) },
     });
-
-    console.log(user);
 
     if (!user) {
       return undefined;
@@ -74,6 +74,10 @@ export class UsersService {
     const accessToken = this.authService.createAccessToken(user.id);
     const refreshToken = this.authService.createRefreshToken(user.id);
 
+    // 리프레시 토큰 레디스 적재
+    await this.cacheDBService.set(String(user.id), refreshToken);
+
+    // 쿠키로 리프레시 토큰 전송
     this.setRefreshTokenHeader(response, refreshToken);
 
     return { user, accessToken };
@@ -85,6 +89,32 @@ export class UsersService {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
+  }
+
+  async refreshAccessToken(req: Request) {
+    const refreshToken = req.cookies.refreshtoken;
+    if (!refreshToken) return null;
+
+    const { userId } = this.authService.verifyAccessToken(refreshToken);
+    if (!userId) return null;
+
+    const storedRefreshToken = await this.cacheDBService.get(String(userId));
+    if (!storedRefreshToken) return null;
+    if (!(storedRefreshToken === refreshToken)) return null;
+
+    const user = await this.getUser(userId);
+    if (!user) return null;
+
+    const newAccessToken = this.authService.createAccessToken(user.id);
+    const newRefreshToken = this.authService.createRefreshToken(user.id);
+
+    await this.cacheDBService.set(String(user.id), newRefreshToken);
+
+    this.setRefreshTokenHeader(req.res, newRefreshToken);
+
+    return {
+      accessToken: newAccessToken,
+    };
   }
 
   getUsers() {
