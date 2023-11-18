@@ -33,27 +33,21 @@ export class BoardsService {
 
     if (!cursor) return { boards: [] };
 
-    // const cursorDataIndex = boardsData.findIndex(
-    //   (board) => board.id === cursor,
-    // );
+    const [boards, total] = await this.boardRepository.findAndCount({
+      order: {
+        id: 'DESC',
+      },
+      skip: cursor - 1,
+      take: realLimit,
+    });
 
-    // if (cursorDataIndex === -1) return { boards: [] };
+    const nextCursor = cursor + realLimit;
+    const hasNext = cursor < total;
 
-    // const result = boardsData.slice(
-    //   cursorDataIndex,
-    //   cursorDataIndex + realLimit,
-    // );
-
-    // const nextCursor = result[result.length - 1].id + 1;
-
-    // const hasNext =
-    //   boardsData.findIndex((board) => board.id === nextCursor) > -1;
-
-    // return {
-    //   cursor: hasNext ? nextCursor : null,
-    //   boards: result,
-    // };
-    return {};
+    return {
+      cursor: hasNext ? nextCursor : null,
+      boards,
+    };
   }
 
   getBoard(boardId: number) {

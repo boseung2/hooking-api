@@ -44,14 +44,13 @@ export class BoardsResolver {
   }
 
   @Query(() => PaginatedBoards)
-  boards(
+  async boards(
     @Args('limit', { type: () => Int, nullable: true, defaultValue: 6 })
     limit: number,
     @Args('cursor', { type: () => Int, nullable: true, defaultValue: 1 })
     cursor: Board['id'],
-  ): PaginatedBoards {
-    // return this.boardService.getBoards(limit, cursor);
-    return {} as PaginatedBoards;
+  ): Promise<PaginatedBoards> {
+    return this.boardService.getBoards(limit, cursor);
   }
 
   @ResolveField(() => User)
