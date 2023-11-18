@@ -41,7 +41,7 @@ export class UsersService {
       password: hashedPw,
     });
 
-    await User.insert(newUser);
+    await this.userRepository.insert(newUser);
 
     return newUser;
   }

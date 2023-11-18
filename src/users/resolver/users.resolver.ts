@@ -26,7 +26,6 @@ export class UsersResolver {
     @Args('loginInput') loginInput: LoginInput,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResponse> {
-    console.log('LOGIN!!!');
     return this.usersService.login(loginInput, response.req.res);
   }
 
