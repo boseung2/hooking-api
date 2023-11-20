@@ -18,16 +18,28 @@ export class UsersService {
     private cacheDBService: CacheDBService,
   ) {}
 
+  async getUserByUserId(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { userId },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   async getUser(id: number) {
     const user = await this.userRepository.findOne({
       where: { id: Equal(id) },
     });
 
     if (!user) {
-      return undefined;
+      return null;
     }
 
-    return user as User;
+    return user;
   }
 
   async createUser(user: SignUpInput) {
@@ -124,9 +136,5 @@ export class UsersService {
     }
 
     return true;
-  }
-
-  getUsers() {
-    return [];
   }
 }

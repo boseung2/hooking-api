@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from '../entity/user.entity';
 import { UsersService } from '../service/users.service';
 import { SignUpInput } from '../input/sign-up.input';
@@ -49,8 +49,10 @@ export class UsersResolver {
     return this.usersService.logout(userId, response.req.res);
   }
 
-  @Query(() => [User])
-  Users(): User[] {
-    return this.usersService.getUsers();
+  @Query(() => User, { nullable: true })
+  async user(
+    @Args('userId', { type: () => String }) userId: string,
+  ): Promise<User> {
+    return this.usersService.getUserByUserId(userId);
   }
 }

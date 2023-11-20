@@ -30,11 +30,11 @@ export class User extends BaseEntity {
   @Column({ comment: '비밀번호' })
   password: string;
 
-  @Field(() => String, { description: '생성 일자' })
+  @Field({ description: '생성 일자' })
   @CreateDateColumn({ comment: '생성 일자' })
   createdAt: Date;
 
-  @Field(() => String, { description: '업데이트 일자' })
+  @Field({ description: '업데이트 일자' })
   @UpdateDateColumn({ comment: '업데이트 일자' })
   updatedAt: Date;
 }
