@@ -18,13 +18,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "bundle": "zip server.zip -r dist package.json"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",
     "@nestjs/apollo": "^12.0.10",
     "@nestjs/cache-manager": "^2.1.1",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/graphql": "^12.0.10",
     "@nestjs/jwt": "^10.2.0",
@@ -36,6 +38,7 @@
     "cache-manager-redis-store": "^3.0.1",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
     "graphql": "^16.8.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.3",

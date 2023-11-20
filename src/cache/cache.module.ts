@@ -7,8 +7,8 @@ import { CacheDBService } from './cache.service';
   imports: [
     CacheModule.register({
       store: redisStore,
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
     }),
   ],
   providers: [CacheDBService],
