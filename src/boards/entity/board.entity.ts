@@ -20,7 +20,7 @@ export class Board {
   type: string;
 
   @Field({ description: '게시글 본문' })
-  @Column({ comment: '게시글 본문' })
+  @Column('longtext', { comment: '게시글 본문' })
   content: string;
 
   @Field(() => Int, { description: '작성자 ID' })

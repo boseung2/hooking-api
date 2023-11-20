@@ -59,9 +59,9 @@ export class BoardsResolver {
   }
 
   @Query(() => Board, { nullable: true })
-  board(
+  async board(
     @Args('boardId', { type: () => Int }) boardId: number,
-  ): Board | undefined {
-    return this.boardService.getBoard(boardId);
+  ): Promise<Board | undefined> {
+    return await this.boardService.getBoard(boardId);
   }
 }

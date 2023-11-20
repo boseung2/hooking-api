@@ -50,8 +50,9 @@ export class BoardsService {
     };
   }
 
-  getBoard(boardId: number) {
-    // return boardsData.find((board) => board.id === boardId);
-    return {} as Board;
+  async getBoard(id: number) {
+    const board = await this.boardRepository.findOne({ where: { id } });
+
+    return board;
   }
 }
