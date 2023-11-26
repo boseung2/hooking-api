@@ -9,6 +9,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://www.hookingcommunity.com',
       'https://www.hookingocmmunity.com',
+      'https://hookingcommunity.com',
     ],
     credentials: true,
   });
