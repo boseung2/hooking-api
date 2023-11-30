@@ -8,6 +8,15 @@ import {
 } from 'typeorm';
 
 @ObjectType()
+export class PaginatedBoards {
+  @Field(() => [Board])
+  boards: Board[];
+
+  @Field(() => Int, { nullable: true })
+  cursor?: Board['id'] | null;
+}
+
+@ObjectType()
 @Entity()
 export class Board {
   @Field(() => Int, { description: '게시글 고유 아이디' })
@@ -31,8 +40,10 @@ export class Board {
   views: number;
 
   @Field(() => Int, { description: '좋아요 수' })
-  @Column({ comment: '좋아요 수' })
   likes: number;
+
+  @Field(() => Boolean, { description: '좋아요 여부' })
+  isLike: boolean;
 
   @Field(() => Int, { description: '댓글 수' })
   @Column({ comment: '댓글 수' })

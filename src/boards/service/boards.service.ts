@@ -57,6 +57,8 @@ export class BoardsService {
   async getBoard(id: number) {
     const board = await this.boardRepository.findOne({ where: { id } });
 
+    this.boardRepository.update(board.id, { ...board, views: board.views + 1 });
+
     return board;
   }
 

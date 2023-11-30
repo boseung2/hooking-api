@@ -3,16 +3,14 @@ import {
   Resolver,
   Root,
   ResolveField,
-  ObjectType,
-  Field,
   Int,
   Args,
   Mutation,
+  Context,
 } from '@nestjs/graphql';
-import { Board } from '../entity/board.entity';
+import { Board, PaginatedBoards } from '../entity/board.entity';
 import { User } from 'src/users/entity/user.entity';
 import { BoardsService } from '../service/boards.service';
-import { UsersService } from '../../users/service/users.service';
 import { CreateBoardInput } from '../input/create-board.input';
 import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -22,21 +20,13 @@ import * as DataLoader from 'dataloader';
 import { Loader } from 'nestjs-dataloader';
 import { BoardLike } from '../entity/board-like.entity';
 import { UsersLoader } from 'src/users/loader/users.loader';
-
-@ObjectType()
-class PaginatedBoards {
-  @Field(() => [Board])
-  boards: Board[];
-
-  @Field(() => Int, { nullable: true })
-  cursor?: Board['id'] | null;
-}
+import { AuthService } from 'src/auth/service/auth.service';
 
 @Resolver(Board)
 export class BoardsResolver {
   constructor(
     private boardService: BoardsService,
-    private usersService: UsersService,
+    private authService: AuthService,
   ) {}
 
   @UseGuards(GqlAuthGuard)
@@ -78,6 +68,27 @@ export class BoardsResolver {
     const boardLikes = await boardLikeLoader.load(board.id);
 
     return boardLikes.length;
+  }
+
+  @ResolveField(() => Boolean)
+  async isLike(
+    @Root() board: Board,
+    @Context() context,
+    @Loader(BoardLikeLoader) boardLikeLoader: DataLoader<number, BoardLike[]>,
+  ): Promise<boolean> {
+    // TODO: CurrentUserDecorator 사용 안되는 이유 알아내야함
+    const { authorization } = context.req.headers;
+    const accessToken = authorization.split(' ')[1];
+    const { userId } = this.authService.verifyAccessToken(accessToken);
+
+    if (!userId) return false;
+
+    const isLikes = await boardLikeLoader.load(board.id);
+    const isLike = isLikes.find((like) => like.userId === userId);
+
+    if (!isLike) return false;
+
+    return true;
   }
 
   @Query(() => Board, { nullable: true })
