@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './entity/board.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { BoardLike } from './entity/board-like.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DataLoaderInterceptor } from 'nestjs-dataloader';
+import { BoardLikeLoader } from './loader/board-like.loader';
 
 @Module({
   imports: [
@@ -13,6 +16,11 @@ import { BoardLike } from './entity/board-like.entity';
     AuthModule,
     UsersModule,
   ],
-  providers: [BoardsResolver, BoardsService],
+  providers: [
+    BoardsResolver,
+    BoardsService,
+    BoardLikeLoader,
+    { provide: APP_INTERCEPTOR, useClass: DataLoaderInterceptor },
+  ],
 })
 export class BoardsModule {}

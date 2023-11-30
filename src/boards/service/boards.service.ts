@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from '../entity/board.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateBoardInput } from '../input/create-board.input';
 import { BoardLike } from '../entity/board-like.entity';
 
@@ -89,5 +89,13 @@ export class BoardsService {
     });
 
     return count;
+  }
+
+  async getBoardLikes(boardIds: number[]) {
+    const boardLikes: BoardLike[] = await this.boardLikeRepository.find({
+      where: { boardId: In(boardIds) },
+    });
+
+    return boardLikes;
   }
 }

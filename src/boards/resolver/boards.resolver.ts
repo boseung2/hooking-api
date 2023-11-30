@@ -17,6 +17,10 @@ import { CreateBoardInput } from '../input/create-board.input';
 import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
+import { BoardLikeLoader } from '../loader/board-like.loader';
+import * as DataLoader from 'dataloader';
+import { Loader } from 'nestjs-dataloader';
+import { BoardLike } from '../entity/board-like.entity';
 
 @ObjectType()
 class PaginatedBoards {
@@ -59,8 +63,13 @@ export class BoardsResolver {
   }
 
   @ResolveField(() => Int)
-  async likes(@Root() board: Board): Promise<number> {
-    return this.boardService.countLikes(board);
+  async likes(
+    @Root() board: Board,
+    @Loader(BoardLikeLoader) boardLikeLoader: DataLoader<number, BoardLike[]>,
+  ): Promise<number> {
+    const result = await boardLikeLoader.load(board.id);
+
+    return result.length;
   }
 
   @Query(() => Board, { nullable: true })
