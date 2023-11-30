@@ -21,6 +21,7 @@ import { BoardLikeLoader } from '../loader/board-like.loader';
 import * as DataLoader from 'dataloader';
 import { Loader } from 'nestjs-dataloader';
 import { BoardLike } from '../entity/board-like.entity';
+import { UsersLoader } from 'src/users/loader/users.loader';
 
 @ObjectType()
 class PaginatedBoards {
@@ -58,8 +59,15 @@ export class BoardsResolver {
   }
 
   @ResolveField(() => User)
-  writer(@Root() parentBoard: Board): Promise<User> | undefined {
-    return this.usersService.getUser(parentBoard.writerId);
+  async writer(
+    @Root() board: Board,
+    @Loader(UsersLoader) usersLoader: DataLoader<number, User[]>,
+  ): Promise<User> | undefined {
+    const users = await usersLoader.load(board.writerId);
+
+    const user = users.find((user) => user.id === board.writerId);
+
+    return user;
   }
 
   @ResolveField(() => Int)
@@ -67,9 +75,9 @@ export class BoardsResolver {
     @Root() board: Board,
     @Loader(BoardLikeLoader) boardLikeLoader: DataLoader<number, BoardLike[]>,
   ): Promise<number> {
-    const result = await boardLikeLoader.load(board.id);
+    const boardLikes = await boardLikeLoader.load(board.id);
 
-    return result.length;
+    return boardLikes.length;
   }
 
   @Query(() => Board, { nullable: true })

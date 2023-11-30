@@ -5,7 +5,7 @@ import * as argon2 from 'argon2';
 import { LoginInput } from '../input/login.input';
 import { AuthService } from '../../auth/service/auth.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 import { Response } from 'express';
 import { CacheDBService } from 'src/cache/cache.service';
 
@@ -40,6 +40,14 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async getUsers(ids: number[]) {
+    const users: User[] = await this.userRepository.find({
+      where: { id: In(ids) },
+    });
+
+    return users;
   }
 
   async createUser(user: SignUpInput) {

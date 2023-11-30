@@ -1,23 +1,20 @@
-import { In, Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { NestDataLoader } from 'nestjs-dataloader';
 import * as DataLoader from 'dataloader';
+import { UsersService } from '../service/users.service';
 
 @Injectable()
-export class UsersLoader implements NestDataLoader<number, User> {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-  ) {}
+export class UsersLoader implements NestDataLoader<number, User[]> {
+  constructor(private userService: UsersService) {}
 
-  getByUserId = () =>
-    new DataLoader<number, User>(async (userIds: number[]) => {
-      const users: User[] = await this.userRepository.find({
-        where: { id: In(userIds) },
-      });
+  generateDataLoader(): DataLoader<number, User[]> {
+    return new DataLoader<number, User[]>(async (ids: number[]) => {
+      const users: User[] = await this.userService.getUsers(ids);
 
-      return userIds.map((userId) => users.find((user) => user.id === userId));
+      const result = ids.map((id) => users.filter((user) => user.id === id));
+
+      return result;
     });
+  }
 }
