@@ -58,10 +58,26 @@ export class BoardsResolver {
     return this.usersService.getUser(parentBoard.writerId);
   }
 
+  @ResolveField(() => Int)
+  async likes(@Root() board: Board): Promise<number> {
+    return this.boardService.countLikes(board);
+  }
+
   @Query(() => Board, { nullable: true })
   async board(
     @Args('boardId', { type: () => Int }) boardId: number,
   ): Promise<Board | undefined> {
     return await this.boardService.getBoard(boardId);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async like(
+    @Args('boardId', { type: () => Int })
+    boardId: number,
+    @CurrentUser()
+    userId: number,
+  ): Promise<boolean> {
+    return await this.boardService.vote(boardId, userId);
   }
 }

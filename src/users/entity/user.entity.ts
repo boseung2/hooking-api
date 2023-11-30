@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { BoardLike } from 'src/boards/entity/board-like.entity';
 import {
   Entity,
   BaseEntity,
@@ -6,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @ObjectType()
@@ -29,6 +31,9 @@ export class User extends BaseEntity {
 
   @Column({ comment: '비밀번호' })
   password: string;
+
+  @OneToMany(() => BoardLike, (boardLike) => boardLike.user)
+  boardLikes: BoardLike[];
 
   @Field({ description: '생성 일자' })
   @CreateDateColumn({ comment: '생성 일자' })

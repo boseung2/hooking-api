@@ -3,12 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from '../entity/board.entity';
 import { Repository } from 'typeorm';
 import { CreateBoardInput } from '../input/create-board.input';
+import { BoardLike } from '../entity/board-like.entity';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private boardRepository: Repository<Board>,
+
+    @InjectRepository(BoardLike)
+    private boardLikeRepository: Repository<BoardLike>,
   ) {}
 
   async createBoard(userId: number, boardData: CreateBoardInput) {
@@ -54,5 +58,36 @@ export class BoardsService {
     const board = await this.boardRepository.findOne({ where: { id } });
 
     return board;
+  }
+
+  async vote(boardId: number, userId: number) {
+    if (!userId) return false;
+    if (!boardId) return false;
+
+    const alreadyVoted = await this.boardLikeRepository.findOne({
+      where: {
+        boardId,
+        userId,
+      },
+    });
+
+    if (alreadyVoted) {
+      await this.boardLikeRepository.delete({ boardId, userId });
+
+      return true;
+    }
+
+    const like = await this.boardLikeRepository.create({ boardId, userId });
+    await this.boardLikeRepository.insert(like);
+
+    return true;
+  }
+
+  async countLikes(board: Board) {
+    const count = await this.boardLikeRepository.count({
+      where: { boardId: board.id },
+    });
+
+    return count;
   }
 }

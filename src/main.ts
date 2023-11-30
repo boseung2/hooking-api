@@ -8,7 +8,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://www.hookingcommunity.com',
-      'https://www.hookingocmmunity.com',
+      'https://www.hookingcommunity.com',
       'https://hookingcommunity.com',
     ],
     credentials: true,

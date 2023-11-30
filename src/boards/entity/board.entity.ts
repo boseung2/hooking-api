@@ -1,5 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Int } from 'type-graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
