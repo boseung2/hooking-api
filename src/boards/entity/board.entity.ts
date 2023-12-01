@@ -58,6 +58,6 @@ export class Board {
   modifiedDate: Date;
 
   @Field(() => Boolean, { description: '삭제여부' })
-  @Column({ comment: '삭제 여부' })
+  @Column({ default: false, comment: '삭제 여부' })
   isDeleted: boolean;
 }

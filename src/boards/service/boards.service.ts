@@ -57,7 +57,9 @@ export class BoardsService {
   }
 
   async getBoard(id: number) {
-    const board = await this.boardRepository.findOne({ where: { id } });
+    const board = await this.boardRepository.findOne({
+      where: { id, isDeleted: false },
+    });
 
     this.boardRepository.update(board.id, { ...board, views: board.views + 1 });
 
@@ -105,7 +107,7 @@ export class BoardsService {
 
   async updateBoard(boardData: UpdateBoardInput) {
     const existingBoard = await this.boardRepository.findOne({
-      where: { id: boardData.id },
+      where: { id: boardData.id, isDeleted: false },
     });
 
     if (!existingBoard) return undefined;
@@ -123,7 +125,7 @@ export class BoardsService {
 
   async deleteBoard(id: number) {
     const existingBoard = await this.boardRepository.findOne({
-      where: { id },
+      where: { id, isDeleted: false },
     });
 
     if (!existingBoard) return undefined;
