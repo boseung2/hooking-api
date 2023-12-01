@@ -21,6 +21,7 @@ import { Loader } from 'nestjs-dataloader';
 import { BoardLike } from '../entity/board-like.entity';
 import { UsersLoader } from 'src/users/loader/users.loader';
 import { AuthService } from 'src/auth/service/auth.service';
+import { UpdateBoardInput } from '../input/update-board.input';
 
 @Resolver(Board)
 export class BoardsResolver {
@@ -79,10 +80,11 @@ export class BoardsResolver {
     // TODO: CurrentUserDecorator 사용 안되는 이유 알아내야함
     const { authorization } = context.req.headers;
     const accessToken = authorization.split(' ')[1];
-    const { userId } = this.authService.verifyAccessToken(accessToken);
+    const verified = this.authService.verifyAccessToken(accessToken);
 
-    if (!userId) return false;
+    if (!verified) return false;
 
+    const userId = verified.userId;
     const isLikes = await boardLikeLoader.load(board.id);
     const isLike = isLikes.find((like) => like.userId === userId);
 
@@ -107,5 +109,22 @@ export class BoardsResolver {
     userId: number,
   ): Promise<boolean> {
     return await this.boardService.vote(boardId, userId);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Board)
+  async updateBoard(
+    @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
+  ): Promise<Board | undefined> {
+    return this.boardService.updateBoard(updateBoardInput);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async deleteBoard(
+    @Args('boardId', { type: () => Int })
+    boardId: number,
+  ): Promise<boolean> {
+    return await this.boardService.deleteBoard(boardId);
   }
 }

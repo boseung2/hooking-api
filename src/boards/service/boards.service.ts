@@ -4,6 +4,7 @@ import { Board } from '../entity/board.entity';
 import { In, Repository } from 'typeorm';
 import { CreateBoardInput } from '../input/create-board.input';
 import { BoardLike } from '../entity/board-like.entity';
+import { UpdateBoardInput } from '../input/update-board.input';
 
 @Injectable()
 export class BoardsService {
@@ -38,6 +39,7 @@ export class BoardsService {
     if (!cursor) return { boards: [] };
 
     const [boards, total] = await this.boardRepository.findAndCount({
+      where: { isDeleted: false },
       order: {
         id: 'DESC',
       },
@@ -99,5 +101,40 @@ export class BoardsService {
     });
 
     return boardLikes;
+  }
+
+  async updateBoard(boardData: UpdateBoardInput) {
+    const existingBoard = await this.boardRepository.findOne({
+      where: { id: boardData.id },
+    });
+
+    if (!existingBoard) return undefined;
+
+    const updatedBoard = this.boardRepository.create({
+      ...existingBoard,
+      content: boardData.content,
+      type: boardData.type,
+    });
+
+    const result = await this.boardRepository.save(updatedBoard);
+
+    return result;
+  }
+
+  async deleteBoard(id: number) {
+    const existingBoard = await this.boardRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingBoard) return undefined;
+
+    const deletedBoard = this.boardRepository.create({
+      ...existingBoard,
+      isDeleted: true,
+    });
+
+    const result = await this.boardRepository.save(deletedBoard);
+
+    return !!result;
   }
 }

@@ -56,4 +56,8 @@ export class Board {
   @Field({ description: '수정일' })
   @UpdateDateColumn({ comment: '업데이트 일자' })
   modifiedDate: Date;
+
+  @Field(() => Boolean, { description: '삭제여부' })
+  @Column({ comment: '삭제 여부' })
+  isDeleted: boolean;
 }
