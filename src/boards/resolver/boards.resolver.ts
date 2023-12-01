@@ -102,7 +102,7 @@ export class BoardsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
-  async like(
+  async likeBoard(
     @Args('boardId', { type: () => Int })
     boardId: number,
     @CurrentUser()
